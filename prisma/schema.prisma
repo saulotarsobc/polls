@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Poll {
+  id        String   @id @default(uuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relation
+  options PollOption[]
+  votes   Vote[]
+}
+
+model PollOption {
+  id     String @id @default(uuid())
+  title  String
+  pollId String
+
+  // relations
+  poll  Poll   @relation(fields: [pollId], references: [id])
+  votes Vote[]
+}
+
+model Vote {
+  id        Int    @id @default(autoincrement())
+  sessionId String
+
+  PollOption   PollOption @relation(fields: [pollOptionId], references: [id])
+  pollOptionId String
+
+  poll   Poll   @relation(fields: [pollId], references: [id])
+  pollId String
+
+  createdAt DateTime @default(now())
+
+  @@unique([sessionId, pollId])
+}
