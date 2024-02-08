@@ -18,17 +18,22 @@ export async function getPoll(app: FastifyInstance) {
           where: { id: pollId },
           include: { options: { select: { title: true, id: true } } },
         })
-        .then((data) => {
-          reply.status(200).send(data);
-          return data;
-        })
         .catch((e: Error) => {
           reply.status(404).send({ msg: e.message });
         });
 
       const result = await redis.zrange(pollId, 0, -1, "WITHSCORES");
+      const votes = result.reduce((obj, line, index) => {
+        if (index % 2 == 0) {
+          const score = result[index + 1];
 
-      console.log(result);
+          Object.assign(obj, { [line]: Number(score) });
+        }
+
+        return obj;
+      }, {} as Record<string, number>);
+
+      return reply.status(200).send({ votes, poll });
     }
   );
 }
