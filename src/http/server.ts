@@ -1,4 +1,4 @@
-import fastify, { FastifyReply, FastifyRequest } from "fastify";
+import fastify from "fastify";
 import { createPoll } from "./routes/create-poll";
 import { getPoll } from "./routes/get-polls";
 import { voteOnPoll } from "./routes/vote-on-poll";
