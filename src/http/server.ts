@@ -3,6 +3,7 @@ import { createPoll } from "./routes/create-poll";
 import { getPoll } from "./routes/get-polls";
 import { voteOnPoll } from "./routes/vote-on-poll";
 import fastifyCookie from "@fastify/cookie";
+import fastifyWebsocket from "@fastify/websocket";
 
 const app = fastify();
 
@@ -12,10 +13,12 @@ app.register(fastifyCookie, {
   // parseOptions: {},
 });
 
+app.register(fastifyWebsocket);
+
 app.register(createPoll);
 app.register(getPoll);
 app.register(voteOnPoll);
 
 app.listen({ port: 3333 }).then(() => {
-  console.log("HTTP Server running!");
+  console.log("HTTP Server running! port: 3333");
 });

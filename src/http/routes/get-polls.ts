@@ -33,7 +33,19 @@ export async function getPoll(app: FastifyInstance) {
         return obj;
       }, {} as Record<string, number>);
 
-      return reply.status(200).send({ votes, poll });
+      return reply.status(200).send({
+        poll: {
+          id: poll?.id,
+          title: poll?.title,
+          options: poll?.options.map((options) => {
+            return {
+              id: options.id,
+              title: options.title,
+              score: options.id in votes ? votes[options.id] : 0,
+            };
+          }),
+        },
+      });
     }
   );
 }
